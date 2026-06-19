@@ -32,10 +32,31 @@ python build_website.py
 node verifikasi_e2e.js
 ```
 
-## Deploy (GitHub Pages)
+## Deploy
 
-Repo ini sudah berisi `index.html` + `data.js`. Aktifkan Pages:
-**Settings → Pages → Branch: `main` / root → Save.**
+### A. Docker / VPS (disarankan untuk VPS)
+
+Build file static dulu di host (butuh `.env`), lalu jalankan container.
+Image **hanya** berisi `index.html` + `data.js` — `.env` & sumber tidak ikut
+(lihat `.dockerignore`).
+
+```bash
+python build_website.py          # hasilkan data.js + suntik salt
+docker compose up -d --build     # serve via nginx
+# situs di http://<ip-vps>:8080  (ubah port di docker-compose.yml)
+```
+
+Tanpa compose:
+```bash
+docker build -t mci-oprec .
+docker run -d -p 8080:80 --restart unless-stopped --name mci-oprec mci-oprec
+```
+
+> Update konten: edit `.env` → `python build_website.py` → `docker compose up -d --build`.
+
+### B. GitHub Pages (alternatif gratis)
+
+Aktifkan: **Settings → Pages → Branch: `main` / root → Save.**
 Situs live di `https://<user>.github.io/<repo>/`.
 
 ## ⚠️ Keamanan
